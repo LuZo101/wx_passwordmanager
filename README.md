@@ -4,4 +4,4 @@
 
 I coded it with code::blocks and wxSmith
 
-![image](https://github.com/qwertz1312/wx_passwordmanager/assets/98673193/0d91afd1-bf65-42f9-ab84-68e719ff39a1)
+![image](https://github.com/qwertz1312/wx_passwordmanager/assets/98673193/250363ae-65ba-47af-9d14-36f15eb6c13a)
