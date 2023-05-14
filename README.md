@@ -6,4 +6,3 @@
 
 made with code::blocks and wxSmith
 ###### Feel free to fork :) its OPEN SOURCE
-CC BY-SA 3.0 AT
