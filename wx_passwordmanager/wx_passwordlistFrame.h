@@ -1,58 +1,47 @@
 #ifndef WX_PASSWORDLISTFRAME_H
 #define WX_PASSWORDLISTFRAME_H
 
-#ifndef WX_PRECOMP
-	//(*HeadersPCH(wx_passwordlistFrame)
-	#include <wx/button.h>
-	#include <wx/frame.h>
-	#include <wx/listctrl.h>
-	#include <wx/panel.h>
-	#include <wx/sizer.h>
-	//*)
-#endif
-//(*Headers(wx_passwordlistFrame)
-//*)
+#include "wx_pch.h"
+#include "passwordManager.hpp"
+#include <wx/frame.h>
+#include <wx/listctrl.h>
+#include <wx/button.h>
 
-class wx_passwordlistFrame: public wxFrame
+class wx_passwordlistFrame : public wxFrame
 {
-	public:
+public:
+    wx_passwordlistFrame(wxWindow* parent, wxWindowID id = wxID_ANY, const wxPoint& pos = wxDefaultPosition, const wxSize& size = wxSize(495, 393));
 
-		wx_passwordlistFrame(wxWindow* parent,wxWindowID id=wxID_ANY,const wxPoint& pos=wxDefaultPosition,const wxSize& size=wxDefaultSize);
-		virtual ~wx_passwordlistFrame();
+private:
+    void InitializeListView(const std::unordered_map<std::string, PasswordManager::PasswordInfo>& passwords);
 
-		//(*Declarations(wx_passwordlistFrame)
-		wxButton* BtnCreatePw;
-		wxButton* BtnDeletePw;
-		wxButton* BtnEditPw;
-		wxButton* BtnShowPw;
-		wxListView* ListView1;
-		wxPanel* Panel1;
-		//*)
+    void OnClose(wxCloseEvent& event);
+    void OnPanel1Paint(wxPaintEvent& event);
+    void OnBtnCreatePwClick(wxCommandEvent& event);
+    void OnListView1BeginDrag(wxListEvent& event);
+    void OnBtnEditPwClick(wxCommandEvent& event);
+    void OnBtnShowPwClick(wxCommandEvent& event);
+    void OnBtnDeletePwClick(wxCommandEvent& event);
+    void OnBtnCloseClick(wxCommandEvent& event);
 
-	protected:
 
-		//(*Identifiers(wx_passwordlistFrame)
-		static const long ID_LISTVIEW1;
-		static const long ID_PANEL1;
-		static const long ID_BUTTON1;
-		static const long ID_BUTTON2;
-		static const long ID_BUTTON3;
-		static const long ID_BUTTON4;
-		//*)
+    wxListView* ListViewShowAllEntrys;
+    wxPanel* Panel1;
+    wxButton* BtnCreatePw;
+    wxButton* BtnEditPw;
+    wxButton* BtnShowPw;
+    wxButton* BtnDeletePw;
+    wxButton* BtnClose;
 
-	private:
+    static const long ID_LISTVIEWShowAllEntrys;
+    static const long ID_PANEL1;
+    static const long ID_BUTTON1;
+    static const long ID_BUTTON2;
+    static const long ID_BUTTON3;
+    static const long ID_BUTTON4;
+    static const long ID_BUTTON5;
 
-		//(*Handlers(wx_passwordlistFrame)
-		void OnClose(wxCloseEvent& event);
-		void OnPanel1Paint(wxPaintEvent& event);
-		void OnBtnCreatePwClick(wxCommandEvent& event);
-		void OnListView1BeginDrag(wxListEvent& event);
-		void OnBtnEditPwClick(wxCommandEvent& event);
-		void OnBtnShowPwClick(wxCommandEvent& event);
-		void OnBtnDeletePwClick(wxCommandEvent& event);
-		//*)
-
-		DECLARE_EVENT_TABLE()
+    DECLARE_EVENT_TABLE()
 };
 
-#endif
+#endif // WX_PASSWORDLISTFRAME_H

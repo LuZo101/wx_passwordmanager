@@ -1,7 +1,7 @@
 #include "wx_pch.h"
 #include "wx_createPasswordDialog.h"
 #include "wx_passwordSettingsDialog.h"
-
+#include "passwordManager.hpp"
 #ifndef WX_PRECOMP
 //(*InternalHeadersPCH(wx_createPasswordDialog)
 #include <wx/string.h>
@@ -68,7 +68,7 @@ wx_createPasswordDialog::wx_createPasswordDialog(wxWindow* parent,wxWindowID id,
     FlexGridSizer1->Add(StaticTextPassword, 1, wxALL|wxALIGN_RIGHT|wxALIGN_CENTER_VERTICAL, 5);
     StaticBoxSizer1->Add(FlexGridSizer1, 1, wxALL|wxALIGN_CENTER_HORIZONTAL|wxALIGN_CENTER_VERTICAL, 5);
     FlexGridSizer2 = new wxFlexGridSizer(0, 4, 0, 0);
-    TextCtrlPassword = new wxTextCtrl(Panel1, ID_TEXTCTRL5, _("Text"), wxDefaultPosition, wxSize(220,34), 0, wxDefaultValidator, _T("ID_TEXTCTRL5"));
+    TextCtrlPassword = new wxTextCtrl(Panel1, ID_TEXTCTRL5, _("password"), wxDefaultPosition, wxSize(220,34), 0, wxDefaultValidator, _T("ID_TEXTCTRL5"));
     FlexGridSizer2->Add(TextCtrlPassword, 1, wxALL|wxALIGN_CENTER_HORIZONTAL|wxALIGN_CENTER_VERTICAL, 5);
     BtnGeneratePw = new wxButton(Panel1, ID_BUTTON2, _("gen"), wxDefaultPosition, wxDefaultSize, 0, wxDefaultValidator, _T("ID_BUTTON2"));
     FlexGridSizer2->Add(BtnGeneratePw, 1, wxALL|wxALIGN_CENTER_HORIZONTAL|wxALIGN_CENTER_VERTICAL, 5);
@@ -89,9 +89,11 @@ wx_createPasswordDialog::wx_createPasswordDialog(wxWindow* parent,wxWindowID id,
     BoxSizer1->Fit(this);
     BoxSizer1->SetSizeHints(this);
 
-    Connect(ID_TEXTCTRL1,wxEVT_COMMAND_TEXT_UPDATED,(wxObjectEventFunction)&wx_createPasswordDialog::OnTextCtrl1Text);
-    Connect(ID_TEXTCTRL3,wxEVT_COMMAND_TEXT_UPDATED,(wxObjectEventFunction)&wx_createPasswordDialog::OnTextCtrl3Text);
-    Connect(ID_TEXTCTRL4,wxEVT_COMMAND_TEXT_UPDATED,(wxObjectEventFunction)&wx_createPasswordDialog::OnTextCtrl4Text);
+    Connect(ID_TEXTCTRL1,wxEVT_COMMAND_TEXT_UPDATED,(wxObjectEventFunction)&wx_createPasswordDialog::OnTextCtrlTitleText);
+    Connect(ID_TEXTCTRL2,wxEVT_COMMAND_TEXT_UPDATED,(wxObjectEventFunction)&wx_createPasswordDialog::OnTextCtrlUsernameText);
+    Connect(ID_TEXTCTRL3,wxEVT_COMMAND_TEXT_UPDATED,(wxObjectEventFunction)&wx_createPasswordDialog::OnTextCtrlURLText);
+    Connect(ID_TEXTCTRL4,wxEVT_COMMAND_TEXT_UPDATED,(wxObjectEventFunction)&wx_createPasswordDialog::OnTextCtrlNoteText);
+    Connect(ID_TEXTCTRL5,wxEVT_COMMAND_TEXT_UPDATED,(wxObjectEventFunction)&wx_createPasswordDialog::OnTextCtrlPasswordText);
     Connect(ID_BUTTON2,wxEVT_COMMAND_BUTTON_CLICKED,(wxObjectEventFunction)&wx_createPasswordDialog::OnBtnGeneratePwClick);
     Connect(ID_BUTTON1,wxEVT_COMMAND_BUTTON_CLICKED,(wxObjectEventFunction)&wx_createPasswordDialog::OnBtnPasswordSettingsClick);
     Connect(ID_BUTTON3,wxEVT_COMMAND_BUTTON_CLICKED,(wxObjectEventFunction)&wx_createPasswordDialog::OnBtnSaveClick);
@@ -110,26 +112,53 @@ wx_createPasswordDialog::~wx_createPasswordDialog()
 void wx_createPasswordDialog::OnInit(wxInitDialogEvent& event)
 {
 }
-
-void wx_createPasswordDialog::OnTextCtrl3Text(wxCommandEvent& event)
+void wx_createPasswordDialog::OnBtnSaveClick(wxCommandEvent& event)
 {
+    std::ofstream loginFile(PasswordManager::getLoginFile(), std::ios::app);
+    if (loginFile.is_open())
+    {
+        std::string title = TextCtrlTitle->GetValue().ToStdString();
+        std::string username = TextCtrlUsername->GetValue().ToStdString();
+        std::string password = TextCtrlPassword->GetValue().ToStdString();
+        std::string url = TextCtrlURL->GetValue().ToStdString();
+        std::string note = TextCtrlNote->GetValue().ToStdString();
+
+        // Schreiben Sie die Passwortinformationen in einer Zeile getrennt durch Kommas
+        loginFile << title << "," << username << "," << password << "," << url << "," << note << std::endl;
+
+        loginFile.close();
+
+        // Zeigen Sie eine Meldung an, die das erfolgreiche Speichern bestätigt
+        wxMessageBox("Password saved successfully!", "Success", wxOK | wxICON_INFORMATION);
+
+        // Schließen Sie den Dialog
+        Close();
+    }
+    else
+    {
+        // Fehler beim Öffnen der Login-Datei
+        wxMessageBox("Failed to open login file!", "Error", wxOK | wxICON_ERROR);
+    }
 }
 
-void wx_createPasswordDialog::OnTextCtrl4Text(wxCommandEvent& event)
-{
-}
 
-void wx_createPasswordDialog::OnTextCtrl1Text(wxCommandEvent& event)
-{
-}
 
 void wx_createPasswordDialog::OnBtnGeneratePwClick(wxCommandEvent& event)
 {
+    // Generieren Sie das Passwort basierend auf den ausgewählten Optionen
+    int length = 10; // Beispiel: Passwortlänge von 10 Zeichen
+    bool includeLetters = true; // Beispiel: Buchstaben einschließen
+    bool includeNumbers = true; // Beispiel: Zahlen einschließen
+    bool includeSpecialChars = true; // Beispiel: Sonderzeichen einschließen
+
+    std::string generatedPassword = PasswordManager::getInstance("username", "password").generateRandomPassword(length, includeLetters, includeNumbers, includeSpecialChars);
+
+    // Setzen Sie das generierte Passwort im Textfeld
+    TextCtrlPassword->SetValue(wxString(generatedPassword));
 }
 
-void wx_createPasswordDialog::OnBtnSaveClick(wxCommandEvent& event)
-{
-}
+
+
 
 void wx_createPasswordDialog::OnBtnCancelClick(wxCommandEvent& event)
 {
@@ -141,4 +170,24 @@ void wx_createPasswordDialog::OnBtnPasswordSettingsClick(wxCommandEvent& event)
     wx_passwordSettingsDialog* dialog = new wx_passwordSettingsDialog(this, wxID_ANY, wxDefaultPosition, wxDefaultSize);
     dialog->ShowModal();
     dialog->Destroy();
+}
+
+void wx_createPasswordDialog::OnTextCtrlTitleText(wxCommandEvent& event)
+{
+}
+
+void wx_createPasswordDialog::OnTextCtrlURLText(wxCommandEvent& event)
+{
+}
+
+void wx_createPasswordDialog::OnTextCtrlUsernameText(wxCommandEvent& event)
+{
+}
+
+void wx_createPasswordDialog::OnTextCtrlNoteText(wxCommandEvent& event)
+{
+}
+
+void wx_createPasswordDialog::OnTextCtrlPasswordText(wxCommandEvent& event)
+{
 }

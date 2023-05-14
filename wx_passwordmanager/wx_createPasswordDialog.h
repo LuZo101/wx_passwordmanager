@@ -70,6 +70,11 @@ class wx_createPasswordDialog: public wxDialog
 		void OnBtnSaveClick(wxCommandEvent& event);
 		void OnBtnCancelClick(wxCommandEvent& event);
 		void OnBtnPasswordSettingsClick(wxCommandEvent& event);
+		void OnTextCtrlTitleText(wxCommandEvent& event);
+		void OnTextCtrlURLText(wxCommandEvent& event);
+		void OnTextCtrlUsernameText(wxCommandEvent& event);
+		void OnTextCtrlNoteText(wxCommandEvent& event);
+		void OnTextCtrlPasswordText(wxCommandEvent& event);
 		//*)
 
 		DECLARE_EVENT_TABLE()

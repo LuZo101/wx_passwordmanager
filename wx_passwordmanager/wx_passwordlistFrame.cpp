@@ -4,6 +4,7 @@
 #include "wx_editPasswordDialog.h"
 #include "wx_deletePasswordDialog.h"
 #include "wx_showPasswordDialog.h"
+#include "passwordManager.hpp"
 #ifndef WX_PRECOMP
 //(*InternalHeadersPCH(wx_passwordlistFrame)
 #include <wx/string.h>
@@ -11,15 +12,18 @@
 //*)
 #endif
 //(*InternalHeaders(wx_passwordlistFrame)
+#include <wx/intl.h>
+#include <wx/string.h>
 //*)
 
 //(*IdInit(wx_passwordlistFrame)
-const long wx_passwordlistFrame::ID_LISTVIEW1 = wxNewId();
+const long wx_passwordlistFrame::ID_LISTVIEWShowAllEntrys = wxNewId();
 const long wx_passwordlistFrame::ID_PANEL1 = wxNewId();
 const long wx_passwordlistFrame::ID_BUTTON1 = wxNewId();
 const long wx_passwordlistFrame::ID_BUTTON2 = wxNewId();
 const long wx_passwordlistFrame::ID_BUTTON3 = wxNewId();
 const long wx_passwordlistFrame::ID_BUTTON4 = wxNewId();
+const long wx_passwordlistFrame::ID_BUTTON5 = wxNewId();
 //*)
 
 BEGIN_EVENT_TABLE(wx_passwordlistFrame,wxFrame)
@@ -37,7 +41,7 @@ wx_passwordlistFrame::wx_passwordlistFrame(wxWindow* parent,wxWindowID id,const 
     SetClientSize(wxSize(495,393));
     BoxSizer1 = new wxBoxSizer(wxVERTICAL);
     Panel1 = new wxPanel(this, ID_PANEL1, wxDefaultPosition, wxDefaultSize, wxTAB_TRAVERSAL, _T("ID_PANEL1"));
-    ListView1 = new wxListView(Panel1, ID_LISTVIEW1, wxDefaultPosition, wxSize(368,352), wxLC_LIST, wxDefaultValidator, _T("ID_LISTVIEW1"));
+    ListViewShowAllEntrys = new wxListView(Panel1, ID_LISTVIEWShowAllEntrys, wxPoint(0,0), wxSize(368,352), wxLC_LIST, wxDefaultValidator, _T("ID_LISTVIEWShowAllEntrys"));
     BoxSizer1->Add(Panel1, 0, wxALL|wxALIGN_CENTER_HORIZONTAL|wxALIGN_CENTER_VERTICAL, 0);
     BoxSizer2 = new wxBoxSizer(wxHORIZONTAL);
     BtnCreatePw = new wxButton(this, ID_BUTTON1, _("create"), wxDefaultPosition, wxDefaultSize, 0, wxDefaultValidator, _T("ID_BUTTON1"));
@@ -48,25 +52,52 @@ wx_passwordlistFrame::wx_passwordlistFrame(wxWindow* parent,wxWindowID id,const 
     BoxSizer2->Add(BtnShowPw, 0, wxALL|wxALIGN_CENTER_HORIZONTAL|wxALIGN_CENTER_VERTICAL, 5);
     BtnDeletePw = new wxButton(this, ID_BUTTON4, _("delete"), wxDefaultPosition, wxDefaultSize, 0, wxDefaultValidator, _T("ID_BUTTON4"));
     BoxSizer2->Add(BtnDeletePw, 1, wxALL|wxALIGN_CENTER_HORIZONTAL|wxALIGN_CENTER_VERTICAL, 5);
+    BtnClose = new wxButton(this, ID_BUTTON5, _("Close"), wxDefaultPosition, wxDefaultSize, 0, wxDefaultValidator, _T("ID_BUTTON5"));
+    BoxSizer2->Add(BtnClose, 1, wxALL|wxALIGN_CENTER_HORIZONTAL|wxALIGN_CENTER_VERTICAL, 5);
     BoxSizer1->Add(BoxSizer2, 1, wxALL|wxEXPAND, 5);
     SetSizer(BoxSizer1);
     SetSizer(BoxSizer1);
     Layout();
 
-    Connect(ID_LISTVIEW1,wxEVT_COMMAND_LIST_BEGIN_DRAG,(wxObjectEventFunction)&wx_passwordlistFrame::OnListView1BeginDrag);
     Panel1->Connect(wxEVT_PAINT,(wxObjectEventFunction)&wx_passwordlistFrame::OnPanel1Paint,0,this);
     Connect(ID_BUTTON1,wxEVT_COMMAND_BUTTON_CLICKED,(wxObjectEventFunction)&wx_passwordlistFrame::OnBtnCreatePwClick);
     Connect(ID_BUTTON2,wxEVT_COMMAND_BUTTON_CLICKED,(wxObjectEventFunction)&wx_passwordlistFrame::OnBtnEditPwClick);
     Connect(ID_BUTTON3,wxEVT_COMMAND_BUTTON_CLICKED,(wxObjectEventFunction)&wx_passwordlistFrame::OnBtnShowPwClick);
     Connect(ID_BUTTON4,wxEVT_COMMAND_BUTTON_CLICKED,(wxObjectEventFunction)&wx_passwordlistFrame::OnBtnDeletePwClick);
-    Connect(wxID_ANY,wxEVT_CLOSE_WINDOW,(wxObjectEventFunction)&wx_passwordlistFrame::OnClose);
+Connect(ID_BUTTON5, wxEVT_COMMAND_BUTTON_CLICKED, (wxObjectEventFunction)&wx_passwordlistFrame::OnBtnCloseClick);
     //*)
+
+
+
 }
 
-wx_passwordlistFrame::~wx_passwordlistFrame()
+void wx_passwordlistFrame::InitializeListView(const std::unordered_map<std::string, PasswordManager::PasswordInfo>& passwords)
 {
-    //(*Destroy(wx_passwordlistFrame)
-    //*)
+   // Löschen Sie alle vorhandenen Einträge im ListView
+    ListViewShowAllEntrys->DeleteAllItems();
+
+    // Durchlaufen Sie die PasswordInfo-Einträge in der std::unordered_map
+    int index = 0;
+    for (const auto& entry : passwords)
+    {
+        // Extrahieren Sie die benötigten Informationen aus dem PasswordInfo-Eintrag
+        const std::string& title = entry.second.getTitle();
+        const std::string& username = entry.second.getUsername();
+        const std::string& url = entry.second.getURL();
+        const std::string& note = entry.second.getNote();
+        const std::string& password = entry.second.getPassword();
+
+        // Fügen Sie eine neue Zeile in das ListView ein
+        long itemIndex = ListViewShowAllEntrys->InsertItem(index, title);
+
+        // Fügen Sie die erforderlichen Unterelemente (Spalten) in die Zeile ein
+        ListViewShowAllEntrys->SetItem(itemIndex, 1, username);
+        ListViewShowAllEntrys->SetItem(itemIndex, 2, url);
+        ListViewShowAllEntrys->SetItem(itemIndex, 3, note);
+        ListViewShowAllEntrys->SetItem(itemIndex, 4, password);
+
+        index++;
+    }
 }
 
 
@@ -81,7 +112,7 @@ void wx_passwordlistFrame::OnPanel1Paint(wxPaintEvent& event)
 
 void wx_passwordlistFrame::OnBtnCreatePwClick(wxCommandEvent& event)
 {
-wx_createPasswordDialog* dialog = new wx_createPasswordDialog(this, wxID_ANY, wxDefaultPosition, wxDefaultSize);
+    wx_createPasswordDialog* dialog = new wx_createPasswordDialog(this, wxID_ANY, wxDefaultPosition, wxDefaultSize);
     dialog->ShowModal();
     // Optionally, you can perform additional actions with the dialog object
     // after the dialog is closed, such as retrieving user input or updating the UI.
@@ -100,6 +131,10 @@ void wx_passwordlistFrame::OnBtnEditPwClick(wxCommandEvent& event)
     wx_editPasswordDialog* dialog = new wx_editPasswordDialog(this, wxID_ANY, wxDefaultPosition, wxDefaultSize);
     dialog->ShowModal();
     dialog->Destroy();
+}
+
+void wx_passwordlistFrame::OnBtnCloseClick(wxCommandEvent& event){
+    Close();
 }
 
 void wx_passwordlistFrame::OnBtnShowPwClick(wxCommandEvent& event)
