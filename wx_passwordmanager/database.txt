@@ -10,5 +10,13 @@ GitHub,myUsername,https://www.github.com/,Version control platform,myGitHubPassw
 Dropbox,myUsername,https://www.dropbox.com/,Cloud storage service,myDropboxPassword
 Instagram,myUsername,https://www.instagram.com/,Photo sharing platform,myInstagramPassword
 Microsoft,myUsername,https://www.microsoft.com/,Technology company,myMicrosoftPassword
+<<<<<<< HEAD
 Title1,asddsa,rAeb9tb4#k,sdsdqa,sadasda
 ,niceradmin,T5a3RsJBYq,deinemama.com,Note das is ein geiles Projekt
+=======
+Title
+Username
+password
+URL
+Note
+>>>>>>> 0f74bcc4f4a1804c69ab1786d80a1523f50f0f05

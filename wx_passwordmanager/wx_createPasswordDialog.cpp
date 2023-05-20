@@ -36,7 +36,10 @@ END_EVENT_TABLE()
 
 wx_createPasswordDialog::wx_createPasswordDialog(wxWindow* parent,wxWindowID id,const wxPoint& pos,const wxSize& size)
 {
+<<<<<<< HEAD
 
+=======
+>>>>>>> 0f74bcc4f4a1804c69ab1786d80a1523f50f0f05
     //(*Initialize(wx_createPasswordDialog)
     wxBoxSizer* BoxSizer1;
     wxBoxSizer* BoxSizer2;

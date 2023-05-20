@@ -10,7 +10,10 @@
 class wx_passwordlistFrame : public wxFrame
 {
 public:
+<<<<<<< HEAD
     PasswordManager passwordManager;
+=======
+>>>>>>> 0f74bcc4f4a1804c69ab1786d80a1523f50f0f05
     wx_passwordlistFrame(wxWindow* parent, wxWindowID id = wxID_ANY, const wxPoint& pos = wxDefaultPosition, const wxSize& size = wxSize(495, 393));
 
 private:
@@ -24,7 +27,11 @@ private:
     void OnBtnShowPwClick(wxCommandEvent& event);
     void OnBtnDeletePwClick(wxCommandEvent& event);
     void OnBtnCloseClick(wxCommandEvent& event);
+<<<<<<< HEAD
     void OnSelectedListViewItem(wxListEvent& event);
+=======
+
+>>>>>>> 0f74bcc4f4a1804c69ab1786d80a1523f50f0f05
 
     wxListView* ListViewShowAllEntrys;
     wxPanel* Panel1;
