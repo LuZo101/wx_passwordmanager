@@ -13,19 +13,17 @@
 #include "cryptopp/hex.h"
 
 class PasswordManager
-{
-private:
+{private:
     std::string username;
     std::string password;
 
     // Private constructor and destructor to prevent direct instantiation and deletion
     PasswordManager(const std::string& username, const std::string& password);
 
-
-
 public:
-     PasswordManager();  // Standardkonstruktor hinzufügen
+    PasswordManager(); // Standardkonstruktor hinzufügen
     ~PasswordManager(); //
+
     struct PasswordInfo
     {
         std::string title;
@@ -33,6 +31,13 @@ public:
         std::string url;
         std::string note;
         std::string password;
+
+        // Konstruktor für PasswordInfo
+        PasswordInfo(const std::string& title, const std::string& username, const std::string& url, const std::string& note, const std::string& password)
+            : title(title), username(username), url(url), note(note), password(password) {}
+
+
+        PasswordInfo() = default;
 
         // Setter functions
         void setTitle(const std::string& newTitle)
@@ -98,7 +103,7 @@ public:
         loginfile = filename;
     }
 
-   static std::string getLoginFile()
+    static std::string getLoginFile()
     {
         return loginfile;
     }
