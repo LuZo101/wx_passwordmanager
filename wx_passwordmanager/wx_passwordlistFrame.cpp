@@ -37,7 +37,6 @@ int m_selectedPasswordIndex;
 wx_passwordlistFrame::wx_passwordlistFrame(wxWindow* parent, wxWindowID id, const wxPoint& pos, const wxSize& size)
     :passwordManager() // Instanz der PasswordManager-Klasse erstellen
 
-
 {
     //(*Initialize(wx_passwordlistFrame)
     wxBoxSizer* BoxSizer1;
@@ -72,7 +71,6 @@ wx_passwordlistFrame::wx_passwordlistFrame(wxWindow* parent, wxWindowID id, cons
     Connect(ID_BUTTON2,wxEVT_COMMAND_BUTTON_CLICKED,(wxObjectEventFunction)&wx_passwordlistFrame::OnBtnEditPwClick);
     Connect(ID_BUTTON3,wxEVT_COMMAND_BUTTON_CLICKED,(wxObjectEventFunction)&wx_passwordlistFrame::OnBtnShowPwClick);
     Connect(ID_BUTTON4,wxEVT_COMMAND_BUTTON_CLICKED,(wxObjectEventFunction)&wx_passwordlistFrame::OnBtnDeletePwClick);
-
     Connect(ID_BUTTON5, wxEVT_COMMAND_BUTTON_CLICKED, (wxObjectEventFunction)&wx_passwordlistFrame::OnBtnCloseClick);
 
     // Event-Verbindung in wx_passwordlistFrame
@@ -114,7 +112,7 @@ Connect(ID_LISTVIEWShowAllEntrys, wxEVT_LIST_ITEM_SELECTED, wxListEventHandler(w
         std::getline(file, note);
         std::getline(file, password);
 
-        //passwords[title] = PasswordManager::PasswordInfo(title, username, url, note, password);
+        passwords[title] = PasswordManager::PasswordInfo(title, username, url, note, password);
     }
 
     file.close();
@@ -137,16 +135,11 @@ void wx_passwordlistFrame::OnSelectedListViewItem(wxListEvent& event)
         m_selectedPasswordIndex = selectedIndex; // Speichere den ausgewählten Index
         BtnShowPw->Enable(); // Aktiviere den "Show Password" Button
     }
-Connect(ID_BUTTON5, wxEVT_COMMAND_BUTTON_CLICKED, (wxObjectEventFunction)&wx_passwordlistFrame::OnBtnCloseClick);
-    //*)
-
-
-
 }
 
 void wx_passwordlistFrame::InitializeListView(const std::unordered_map<std::string, PasswordManager::PasswordInfo>& passwords)
 {
-
+    // Löschen Sie alle vorhandenen Einträge im ListView
     ListViewShowAllEntrys->DeleteAllItems();
 
     // Durchlaufen Sie die PasswordInfo-Einträge in der std::unordered_map
@@ -189,7 +182,6 @@ void wx_passwordlistFrame::OnBtnCreatePwClick(wxCommandEvent& event)
     dialog->Destroy();
 }
 
-
 void wx_passwordlistFrame::OnBtnEditPwClick(wxCommandEvent& event)
 {
     wx_editPasswordDialog* dialog = new wx_editPasswordDialog(this, wxID_ANY, wxDefaultPosition, wxDefaultSize);
@@ -197,8 +189,8 @@ void wx_passwordlistFrame::OnBtnEditPwClick(wxCommandEvent& event)
     dialog->Destroy();
 }
 
-
-void wx_passwordlistFrame::OnBtnCloseClick(wxCommandEvent& event){
+void wx_passwordlistFrame::OnBtnCloseClick(wxCommandEvent& event)
+{
     Close();
 }
 
@@ -227,9 +219,6 @@ void wx_passwordlistFrame::OnBtnShowPwClick(wxCommandEvent& event)
         // Zeige die MessageBox mit allen Informationen an
         wxMessageBox(message, "Passwort anzeigen", wxOK | wxICON_INFORMATION);
     }
-    wx_showPasswordDialog* dialog = new wx_showPasswordDialog(this, wxID_ANY, wxDefaultPosition, wxDefaultSize);
-    dialog->ShowModal();
-    dialog->Destroy();
 }
 
 void wx_passwordlistFrame::OnBtnDeletePwClick(wxCommandEvent& event)
