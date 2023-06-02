@@ -1,7 +1,6 @@
-<<<<<<< HEAD
-*/wx_passwordmanager/bin/
-*/wx_passwordmanager/obj/
-*/wx_passwordmanager/wx_pch.h.gch/
+wx_passwordmanager/bin/
+wx_passwordmanager/obj/
+wx_passwordmanager/wx_pch.h.gch/
 wx_passwordmanager/wx_pch.h.gch/
 wx_passwordmanager/obj/
 wx_passwordmanager/bin/
@@ -9,8 +8,7 @@ wx_passwordmanager/bin/
 /bin/
 /obj/
 wx_pch.h.gch/
-=======
 */wx_passwordmanager/bin
 */wx_passwordmanager/obj/
 */wx_passwordmanager/wx_pch.h.gch/
->>>>>>> 0f74bcc4f4a1804c69ab1786d80a1523f50f0f05
+
