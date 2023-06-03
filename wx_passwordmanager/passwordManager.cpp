@@ -185,7 +185,6 @@ void PasswordManager::loadAuthenticationCredentialsFromFile(const std::string& f
 
     file.close();
 }
-
 void PasswordManager::loadDataFromFile(const std::string& filename)
 {
     std::ifstream file(filename);
@@ -198,34 +197,50 @@ void PasswordManager::loadDataFromFile(const std::string& filename)
     // Leeren des bestehenden Inhalts von passwords
     passwords.clear();
 
-    // Überspringen der ersten zwei Zeilen
-    std::string dummyLine;
-    std::getline(file, dummyLine);
-    std::getline(file, dummyLine);
-
     std::string line;
+    int lineCount = 0;
     while (std::getline(file, line))
     {
-        std::istringstream iss(line);
-        std::string title, username, url, note, password;
-        if (std::getline(iss, title, ',') &&
-                std::getline(iss, username, ',') &&
-                std::getline(iss, url, ',') &&
-                std::getline(iss, note, ',') &&
-                std::getline(iss, password))
+        if (lineCount < 2) // Erste zwei Zeilen überspringen
         {
-            PasswordInfo passwordInfo;
-            passwordInfo.setTitle(title);
-            passwordInfo.setUsername(username);
-            passwordInfo.setURL(url);
-            passwordInfo.setNote(note);
-            passwordInfo.setPassword(password);
-            passwords[title] = passwordInfo;
+            lineCount++;
+            continue;
         }
+
+        std::string title, username, url, note, password;
+        size_t startPos = 0;
+        size_t delimiterPos = line.find("||", startPos);
+
+        // Extrahieren der einzelnen Felder
+        title = line.substr(startPos, delimiterPos - startPos);
+        startPos = delimiterPos + 2; // Länge des Trennzeichens berücksichtigen
+
+        delimiterPos = line.find("||", startPos);
+        username = line.substr(startPos, delimiterPos - startPos);
+        startPos = delimiterPos + 2;
+
+        delimiterPos = line.find("||", startPos);
+        url = line.substr(startPos, delimiterPos - startPos);
+        startPos = delimiterPos + 2;
+
+        delimiterPos = line.find("||", startPos);
+        note = line.substr(startPos, delimiterPos - startPos);
+        startPos = delimiterPos + 2;
+
+        password = line.substr(startPos);
+
+        PasswordInfo passwordInfo;
+        passwordInfo.setTitle(title);
+        passwordInfo.setUsername(username);
+        passwordInfo.setURL(url);
+        passwordInfo.setNote(note);
+        passwordInfo.setPassword(password);
+        passwords[title] = passwordInfo;
     }
 
     file.close();
 }
+
 
 
 

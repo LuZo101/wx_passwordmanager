@@ -38,15 +38,15 @@ wx_passwordlistFrame::wx_passwordlistFrame(wxWindow* parent, wxWindowID id, cons
     :passwordManager() // Instanz der PasswordManager-Klasse erstellen
 
 {
-    //(*Initialize(wx_passwordlistFrame)
+    //(Initialize(wx_passwordlistFrame)
     wxBoxSizer* BoxSizer1;
     wxBoxSizer* BoxSizer2;
 
     Create(parent, wxID_ANY, wxEmptyString, wxDefaultPosition, wxDefaultSize, wxDEFAULT_FRAME_STYLE, _T("wxID_ANY"));
-    SetClientSize(wxSize(495,393));
+    SetClientSize(wxSize(690, 420));
     BoxSizer1 = new wxBoxSizer(wxVERTICAL);
     Panel1 = new wxPanel(this, ID_PANEL1, wxDefaultPosition, wxDefaultSize, wxTAB_TRAVERSAL, _T("ID_PANEL1"));
-    ListViewShowAllEntrys = new wxListView(Panel1, ID_LISTVIEWShowAllEntrys, wxPoint(0,0), wxSize(368,352), wxLC_LIST, wxDefaultValidator, _T("ID_LISTVIEWShowAllEntrys"));
+    ListViewShowAllEntrys = new wxListView(Panel1, ID_LISTVIEWShowAllEntrys, wxPoint(0,0), wxSize(690, 300), wxLC_LIST, wxDefaultValidator, _T("ID_LISTVIEWShowAllEntrys"));
     BoxSizer1->Add(Panel1, 0, wxALL|wxALIGN_CENTER_HORIZONTAL|wxALIGN_CENTER_VERTICAL, 0);
     BoxSizer2 = new wxBoxSizer(wxHORIZONTAL);
     BtnCreatePw = new wxButton(this, ID_BUTTON1, _("create"), wxDefaultPosition, wxDefaultSize, 0, wxDefaultValidator, _T("ID_BUTTON1"));
@@ -64,7 +64,7 @@ wx_passwordlistFrame::wx_passwordlistFrame(wxWindow* parent, wxWindowID id, cons
     SetSizer(BoxSizer1);
     Layout();
 
-    ListViewShowAllEntrys = new wxListView(Panel1, ID_LISTVIEWShowAllEntrys, wxPoint(0, 0), wxSize(368, 352), wxLC_REPORT, wxDefaultValidator, _T("ID_LISTVIEWShowAllEntrys"));
+    ListViewShowAllEntrys = new wxListView(Panel1, ID_LISTVIEWShowAllEntrys, wxPoint(0, 0), wxSize(690, 300), wxLC_REPORT, wxDefaultValidator, _T("ID_LISTVIEWShowAllEntrys"));
 
 
     Connect(ID_BUTTON1,wxEVT_COMMAND_BUTTON_CLICKED,(wxObjectEventFunction)&wx_passwordlistFrame::OnBtnCreatePwClick);
@@ -74,7 +74,7 @@ wx_passwordlistFrame::wx_passwordlistFrame(wxWindow* parent, wxWindowID id, cons
     Connect(ID_BUTTON5, wxEVT_COMMAND_BUTTON_CLICKED, (wxObjectEventFunction)&wx_passwordlistFrame::OnBtnCloseClick);
 
     // Event-Verbindung in wx_passwordlistFrame
-Connect(ID_LISTVIEWShowAllEntrys, wxEVT_LIST_ITEM_SELECTED, wxListEventHandler(wx_passwordlistFrame::OnSelectedListViewItem));
+    Connect(ID_LISTVIEWShowAllEntrys, wxEVT_LIST_ITEM_SELECTED, wxListEventHandler(wx_passwordlistFrame::OnSelectedListViewItem));
 
     //*)
 
@@ -85,7 +85,6 @@ Connect(ID_LISTVIEWShowAllEntrys, wxEVT_LIST_ITEM_SELECTED, wxListEventHandler(w
     ListViewShowAllEntrys->InsertColumn(2, "URL");
     ListViewShowAllEntrys->InsertColumn(3, "Note");
     ListViewShowAllEntrys->InsertColumn(4, "Password");
-
 
     // Dateipfad der loginfile abrufen
     std::string loginfile = passwordManager.getLoginFile();
@@ -102,18 +101,24 @@ Connect(ID_LISTVIEWShowAllEntrys, wxEVT_LIST_ITEM_SELECTED, wxListEventHandler(w
     std::unordered_map<std::string, PasswordManager::PasswordInfo> passwords;
 
     std::string line;
-    while (std::getline(file, line))
-    {
-        std::string title = line;
-        std::string username, url, note, password;
 
-        std::getline(file, username);
-        std::getline(file, url);
-        std::getline(file, note);
-        std::getline(file, password);
+// Erste zwei Zeilen überspringen
+std::getline(file, line);
+std::getline(file, line);
 
-        passwords[title] = PasswordManager::PasswordInfo(title, username, url, note, password);
-    }
+while (std::getline(file, line))
+{
+    // Aufteilung der Zeile anhand des Trennzeichen-Musters "|"
+    std::stringstream ss(line);
+    std::string title, username, url, note, password;
+    std::getline(ss, title, '|');
+    std::getline(ss, username, '|');
+    std::getline(ss, url, '|');
+    std::getline(ss, note, '|');
+    std::getline(ss, password, '|');
+
+    passwords[title] = PasswordManager::PasswordInfo(title, username, url, note, password);
+}
 
     file.close();
 
@@ -136,13 +141,12 @@ void wx_passwordlistFrame::OnSelectedListViewItem(wxListEvent& event)
         BtnShowPw->Enable(); // Aktiviere den "Show Password" Button
     }
 }
-
 void wx_passwordlistFrame::InitializeListView(const std::unordered_map<std::string, PasswordManager::PasswordInfo>& passwords)
 {
     // Löschen Sie alle vorhandenen Einträge im ListView
     ListViewShowAllEntrys->DeleteAllItems();
 
-    // Durchlaufen Sie die PasswordInfo-Einträge in der std::unordered_map
+    // Durchlaufen Sie die PasswordInfo-Einträge in der PasswordManager-Klasse
     int index = 0;
     for (const auto& entry : passwords)
     {
@@ -157,6 +161,7 @@ void wx_passwordlistFrame::InitializeListView(const std::unordered_map<std::stri
         long itemIndex = ListViewShowAllEntrys->InsertItem(index, title);
 
         // Fügen Sie die erforderlichen Unterelemente (Spalten) in die Zeile ein
+        ListViewShowAllEntrys->SetItem(itemIndex, 0, title);
         ListViewShowAllEntrys->SetItem(itemIndex, 1, username);
         ListViewShowAllEntrys->SetItem(itemIndex, 2, url);
         ListViewShowAllEntrys->SetItem(itemIndex, 3, note);
@@ -199,7 +204,7 @@ void wx_passwordlistFrame::OnBtnShowPwClick(wxCommandEvent& event)
     //wx_showPasswordDialog* dialog = new wx_showPasswordDialog(this, wxID_ANY, wxDefaultPosition, wxDefaultSize);
     //dialog->ShowModal();
     //dialog->Destroy();
-     // Überprüfe, ob ein Passwort ausgewählt wurde
+    // Überprüfe, ob ein Passwort ausgewählt wurde
     if (m_selectedPasswordIndex >= 0 && m_selectedPasswordIndex < ListViewShowAllEntrys->GetItemCount())
     {
         // Hole alle Informationen des Passworts aus dem ListView
