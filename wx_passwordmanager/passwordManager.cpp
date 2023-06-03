@@ -209,21 +209,21 @@ void PasswordManager::loadDataFromFile(const std::string& filename)
 
         std::string title, username, url, note, password;
         size_t startPos = 0;
-        size_t delimiterPos = line.find("||", startPos);
+        size_t delimiterPos = line.find('|', startPos);
 
         // Extrahieren der einzelnen Felder
         title = line.substr(startPos, delimiterPos - startPos);
         startPos = delimiterPos + 2; // Länge des Trennzeichens berücksichtigen
 
-        delimiterPos = line.find("||", startPos);
+        delimiterPos = line.find('|', startPos);
         username = line.substr(startPos, delimiterPos - startPos);
         startPos = delimiterPos + 2;
 
-        delimiterPos = line.find("||", startPos);
+        delimiterPos = line.find('|', startPos);
         url = line.substr(startPos, delimiterPos - startPos);
         startPos = delimiterPos + 2;
 
-        delimiterPos = line.find("||", startPos);
+        delimiterPos = line.find('|', startPos);
         note = line.substr(startPos, delimiterPos - startPos);
         startPos = delimiterPos + 2;
 

@@ -14,8 +14,7 @@ public:
     wx_passwordlistFrame(wxWindow* parent, wxWindowID id = wxID_ANY, const wxPoint& pos = wxDefaultPosition, const wxSize& size = wxSize(690, 420));
 
 private:
-    void InitializeListView(const std::unordered_map<std::string, PasswordManager::PasswordInfo>& passwords);
-
+void InitializeListView(const std::map<std::string, PasswordManager::PasswordInfo>& passwords);
     void OnClose(wxCloseEvent& event);
     void OnPanel1Paint(wxPaintEvent& event);
     void OnBtnCreatePwClick(wxCommandEvent& event);

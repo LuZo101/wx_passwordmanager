@@ -125,7 +125,7 @@ void wx_createPasswordDialog::OnBtnSaveClick(wxCommandEvent& event)
         std::string note = TextCtrlNote->GetValue().ToStdString();
 
         // Schreiben Sie die Passwortinformationen in einer Zeile getrennt durch Kommas
-        loginFile << title << "," << username << "," << password << "," << url << "," << note << std::endl;
+        loginFile << title << "|" << username << "|" << password << "|" << url << "|" << note << std::endl;
 
         loginFile.close();
 
